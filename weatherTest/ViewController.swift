@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var liveWeatherYo: UITextField!
     
-        var actualTempYo: Double = -0.1
+        var actualTempYo: Double = 0.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,49 +37,50 @@ class ViewController: UIViewController {
         
         actuallyGetThaData()
         
-        liveWeatherYo.text = "\(actualTempYo)"
         
-        print(actualTempYo)
-    
+        
     }
         
     
         
     func actuallyGetThaData() {
-        
         print("Trying to get Data")
-        
-      
-            
         guard let weatherUrl = URL(string: "https://api.darksky.net/forecast/1b1d092b30c843119e15cb6033186506/35.2271,80.8431") else { return }
-        URLSession.shared.dataTask(with: weatherUrl) { (data, response
-            , error) in
+        URLSession.shared.dataTask(with: weatherUrl, completionHandler: { data, response
+            , error in
             guard let data = data else { return }
             do {
                 let decoder = JSONDecoder()
                 let weatherData = try decoder.decode(WeatherInfo.self, from: data)
-                
-             
-                
                 print(weatherData.currently.temperature)
-                
+               
                 self.actualTempYo = weatherData.currently.temperature
                 
                 
-                
                 print("got Data")
-                
-                
                 print("Actual data is \(self.actualTempYo)")
                 
-                
+                self.updateUI(newText: self.actualTempYo)
+              
                 
             } catch let error {
                 print("Err", error)
             }
-            }.resume()
+            }).resume()
+        
+        
     
-         liveWeatherYo.text = "\(actualTempYo)"
+        
+        
+        
+    }
+    
+    
+    
+    func updateUI (newText: Double) {
+        
+        liveWeatherYo.text = "\(newText)"
+        
     }
     
 
